@@ -1,78 +1,76 @@
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
 
-import java.awt.Frame;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+public class MainPage extends JFrame {
 
-public class MainPage {
+	private JPanel contentPane;
 
-	protected Shell shell;
-
-	/**
-	 * Launch the application.
-	 * @param args
-	 */
 	public static void main(String[] args) {
-		try {
-			MainPage window = new MainPage();
-			window.open();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Open the window.
-	 */
-	public void open() {
-		Display display = Display.getDefault();
-		createContents();
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MainPage frame = new MainPage();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-		}
+		});
 	}
-
-	/**
-	 * Create contents of the window.
-	 */
-	protected void createContents() {
-		shell = new Shell();
-		shell.setSize(450, 300);
-		shell.setText("Login Page");
+	
+	public MainPage() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
 		
-		Button adminButton = new Button(shell, SWT.NONE);
-		adminButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				shell.close();
+		JButton btnAdmin = new JButton("Admin");
+		btnAdmin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
 				AdminLogin adLog = new AdminLogin();
 				adLog.setVisible(true);
 			}
 		});
-		adminButton.setBounds(163, 79, 75, 25);
-		adminButton.setText("Admin");
 		
-		Button customerButton = new Button(shell, SWT.NONE);
-		customerButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				shell.dispose();
+		JButton btnCustomer = new JButton("Customer");
+		btnCustomer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
 				CustomerLogin cLog = new CustomerLogin();
 				cLog.setVisible(true);
 			}
 		});
-		customerButton.setBounds(163, 128, 75, 25);
-		customerButton.setText("Customer");
-
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+					.addContainerGap(177, Short.MAX_VALUE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+						.addComponent(btnCustomer, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnAdmin, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE))
+					.addGap(158))
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(100)
+					.addComponent(btnAdmin)
+					.addGap(18)
+					.addComponent(btnCustomer)
+					.addContainerGap(87, Short.MAX_VALUE))
+		);
+		contentPane.setLayout(gl_contentPane);
 	}
+
 }

@@ -47,7 +47,7 @@ public class CustomerLogin extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 				MainPage mPage = new MainPage();
-				mPage.shell.setVisible(true);
+				mPage.setVisible(true);
 			}
 		});
 		

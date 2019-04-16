@@ -8,6 +8,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -26,8 +27,12 @@ public class Customer extends JFrame {
 	private JTextField textField_1;
 	private JTextField textField_2;
 	private JTextField textField_3;
+	
+	JLabel with_label;
 
 	JLabel bal = new JLabel("");
+	JLabel dep_label = new JLabel("");
+	JLabel transfer_label;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -42,12 +47,9 @@ public class Customer extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public Customer() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 500, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -90,7 +92,29 @@ public class Customer extends JFrame {
 		JButton btnDeposit = new JButton("Deposit");
 		btnDeposit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int x  =5;
+				try {
+					int x = Integer.parseInt(textField.getText());
+					 try {
+									
+					        Class.forName("oracle.jdbc.driver.OracleDriver");					
+					        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:ORCL", "system", "rajeev");						
+					        Statement stmt = con.createStatement();								        
+					        ResultSet rs = stmt.executeQuery("UPDATE account SET balance = balance + "+Integer.toString(x)+" WHERE acc_no = "+Integer.toString(account));
+					        dep_label.setText("Balance Updated");
+					        con.close();			
+					    } catch (SQLException ex) {
+			
+					        System.out.println(ex);
+			
+					    }catch (ClassNotFoundException ex) {
+			
+					        System.out.println(ex);			
+					    }
+				}
+				catch (Exception e1) {
+					e1.printStackTrace();
+					dep_label.setText("Only numbers can be entered");
+				}
 			}
 			
 		});
@@ -98,11 +122,83 @@ public class Customer extends JFrame {
 		JButton btnWithdraw = new JButton("Withdraw");
 		btnWithdraw.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int x;
+				try {
+					int x = Integer.parseInt(textField_1.getText());
+					int flag = 0;
+					
+					try {
+
+						Class.forName("oracle.jdbc.driver.OracleDriver");
+						Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:ORCL", "system", "rajeev");
+
+						CallableStatement stmt = null;
+						
+						stmt = con.prepareCall("{call withdrawal(?,?,?)}");
+						stmt.setInt(1,x);
+						stmt.setInt(2,account);
+						stmt.registerOutParameter(3,java.sql.Types.VARCHAR);
+						stmt.executeUpdate();
+						flag = stmt.getInt(3);
+						
+						if (flag == 1) {
+							with_label.setText("Insufficient Funds");
+						}
+						else {
+							with_label.setText("Amount withdrawn");
+						}
+						con.close();
+
+					} catch (Exception e3) {
+						System.out.println(e3);
+					}
+				}
+				catch(Exception e2) {
+					e2.printStackTrace();
+					with_label.setText("Only numbers can be entered");
+				}
 			}
 		});
 		
 		JButton btnTransfer = new JButton("Transfer");
+		btnTransfer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					int x = Integer.parseInt(textField_2.getText());
+					int y = Integer.parseInt(textField_3.getText());
+					int flag = 0;
+					try {
+
+						Class.forName("oracle.jdbc.driver.OracleDriver");
+						Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:ORCL", "system", "rajeev");
+
+						CallableStatement stmt = null;
+						
+						stmt = con.prepareCall("{call transfer(?,?,?,?)}");
+						stmt.setInt(1,account);
+						stmt.setInt(2,y);
+						stmt.setInt(3,x);
+						stmt.registerOutParameter(4,java.sql.Types.VARCHAR);
+						stmt.executeUpdate();
+						flag = stmt.getInt(4);
+						
+						if (flag == 1) {
+							transfer_label.setText("Insufficient Funds");
+						}
+						else {
+							transfer_label.setText("Amount transferred");
+						}
+						con.close();
+
+					} catch (Exception e3) {
+						System.out.println(e3);
+					}
+				}
+				catch(Exception e2) {
+					e2.printStackTrace();
+					transfer_label.setText("Enter numbers only");
+				}
+			}
+		});
 		
 		textField = new JTextField();
 		textField.setColumns(10);
@@ -117,11 +213,14 @@ public class Customer extends JFrame {
 		textField_3.setColumns(10);
 		
 		
-		JLabel dep_label = new JLabel("");
 		
-		JLabel lblNewLabel_2 = new JLabel("New label");
+		with_label = new JLabel("");
 		
-		JLabel lblNewLabel_3 = new JLabel("New label");
+		JLabel lblNewLabel_3 = new JLabel("Amount");
+		
+		JLabel lblAccountNumber = new JLabel("Account Number");
+		
+		transfer_label = new JLabel("");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -129,40 +228,46 @@ public class Customer extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(btnBack))
+							.addComponent(btnBack)
+							.addGap(179)
+							.addComponent(lblNewLabel_3))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(98)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnDeposit)
-								.addComponent(btnWithdraw)
-								.addComponent(btnTransfer)
-								.addComponent(btnViewBalance))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(btnViewBalance, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(btnDeposit, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(btnWithdraw, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(btnTransfer, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 							.addGap(27)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(bal)
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+									.addGap(10)
+									.addComponent(transfer_label))
+								.addComponent(bal)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 									.addGap(18)
-									.addComponent(lblNewLabel_2))
+									.addComponent(with_label))
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 									.addGap(18)
-									.addComponent(dep_label)))))
-					.addContainerGap(22, Short.MAX_VALUE))
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-					.addContainerGap(287, Short.MAX_VALUE)
-					.addComponent(lblNewLabel_3)
-					.addGap(91))
+									.addComponent(dep_label))
+								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+									.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(lblAccountNumber)
+										.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+									.addGap(28)))))
+					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(btnBack)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(btnBack)
+						.addComponent(lblNewLabel_3))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnViewBalance)
@@ -176,15 +281,17 @@ public class Customer extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnWithdraw)
 						.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNewLabel_2))
+						.addComponent(with_label))
 					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnTransfer)
 						.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(lblNewLabel_3)
-					.addContainerGap(35, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(transfer_label)
+						.addComponent(lblAccountNumber))
+					.addContainerGap(40, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
 	}

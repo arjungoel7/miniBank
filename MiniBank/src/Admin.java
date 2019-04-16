@@ -18,7 +18,6 @@ import java.awt.event.ActionEvent;
 public class Admin extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField txtDc;
 
 	/**
 	 * Launch the application.
@@ -46,15 +45,7 @@ public class Admin extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		txtDc = new JTextField();
-		txtDc.setText("dc");
-		txtDc.setColumns(10);
-		
-		JLabel lblAccountNumebr = new JLabel("Account Number");
-		
 		JList list = new JList();
-		
-		JButton btnNewButton = new JButton("New button");
 		
 		JButton btnBack = new JButton("Back");
 		btnBack.addActionListener(new ActionListener() {
@@ -64,45 +55,68 @@ public class Admin extends JFrame {
 				adLog.setVisible(true);
 			}
 		});
+		
+		JButton btnViewDatabase = new JButton("View Database");
+		btnViewDatabase.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				ViewDB vdb = new ViewDB();
+				vdb.setVisible(true);
+			}
+		});
+		
+		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				DeleteData dd = new DeleteData();
+				dd.setVisible(true);
+			}
+		});
+		
+		JButton btnNewButton_1 = new JButton("Grant Loan");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				GrantLoan gl = new GrantLoan();
+				gl.setVisible(true);
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap(178, Short.MAX_VALUE)
-					.addComponent(lblAccountNumebr)
-					.addGap(31)
-					.addComponent(txtDc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(50))
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-					.addGap(152)
-					.addComponent(list, GroupLayout.PREFERRED_SIZE, 1, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(271, Short.MAX_VALUE))
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap(217, Short.MAX_VALUE)
-					.addComponent(btnNewButton)
-					.addGap(118))
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(btnBack)
-					.addContainerGap(325, Short.MAX_VALUE))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(btnBack))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(166)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(btnViewDatabase, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(btnDelete, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(btnNewButton_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(list, GroupLayout.PREFERRED_SIZE, 1, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap(148, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(35)
+							.addGap(81)
+							.addComponent(btnViewDatabase)
+							.addGap(18)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(txtDc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblAccountNumebr))
-							.addGap(66)
-							.addComponent(list, GroupLayout.PREFERRED_SIZE, 1, GroupLayout.PREFERRED_SIZE)
-							.addGap(29)
-							.addComponent(btnNewButton))
+								.addComponent(list, GroupLayout.PREFERRED_SIZE, 1, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnDelete)))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addContainerGap()
 							.addComponent(btnBack)))
-					.addContainerGap(77, Short.MAX_VALUE))
+					.addGap(18)
+					.addComponent(btnNewButton_1)
+					.addContainerGap(65, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
 	}
